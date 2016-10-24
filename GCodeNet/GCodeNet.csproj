@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{12E6988E-D61B-4D15-AE53-6478EA04939F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GCodeNet</RootNamespace>
+    <AssemblyName>GCodeNet</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>Profile5</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .NET Framework is automatically included -->
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Base\CommandType.cs" />
+    <Compile Include="Base\CRC.cs" />
+    <Compile Include="Base\ParameterType.cs" />
+    <Compile Include="Base\CommandAttribute.cs" />
+    <Compile Include="Base\CommandBase.cs" />
+    <Compile Include="Base\CommandMapping.cs" />
+    <Compile Include="Base\Command.cs" />
+    <Compile Include="Base\ParameterTypeAttribute.cs" />
+    <Compile Include="Commands\G\ControlledArcMoveClockwise.cs" />
+    <Compile Include="Commands\G\ControlledArcMoveCounterClockwise.cs" />
+    <Compile Include="Commands\G\Dwell.cs" />
+    <Compile Include="Commands\G\MoveToOrigin.cs" />
+    <Compile Include="Commands\G\RapidLinearMove.cs" />
+    <Compile Include="Commands\M\FanOff.cs" />
+    <Compile Include="Commands\M\FanOn.cs" />
+    <Compile Include="Commands\M\StopIdleHold.cs" />
+    <Compile Include="Commands\G\SetAbsolutePositioning.cs" />
+    <Compile Include="Commands\G\SetPosition.cs" />
+    <Compile Include="Commands\G\SetRelativePositioning.cs" />
+    <Compile Include="Commands\M\SetExtruderTemperature.cs" />
+    <Compile Include="Commands\M\SetExtruderTemperatureAndWait.cs" />
+    <Compile Include="Commands\M\SetExtruderToAbsolute.cs" />
+    <Compile Include="Extensions\Export.cs" />
+    <Compile Include="GCodeFileLine.cs" />
+    <Compile Include="GCodeFileOptions.cs" />
+    <Compile Include="Base\GCodeTokenizer.cs" />
+    <Compile Include="Reflection\CommandReflection.cs" />
+    <Compile Include="Reflection\CommandReflectionData.cs" />
+    <Compile Include="Commands\G\SetUnitsToInches.cs" />
+    <Compile Include="Commands\G\SetUnitsToMillimeters.cs" />
+    <Compile Include="GCodeFile.cs" />
+    <Compile Include="Commands\G\LinearMove.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
