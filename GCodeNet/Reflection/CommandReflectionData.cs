@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace GCodeNet
 {
-    class CommandReflectionData
+    public class CommandReflectionData
     {
         public Type Type { get; private set; }
 

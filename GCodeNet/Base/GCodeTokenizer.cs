@@ -10,7 +10,7 @@ namespace GCodeNet
         public GCodeTokenizer(string gcode)
         {
             this.gcode = RemoveWhitespace(gcode);
-            CheckForIllegalChars(gcode);
+            CheckForIllegalChars(this.gcode);
         }
 
         void CheckForIllegalChars(string gcode)

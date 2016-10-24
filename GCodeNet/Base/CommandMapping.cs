@@ -1,14 +1,28 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace GCodeNet
 {
     public abstract class CommandMapping : CommandBase
     {
-        public override ParameterType[] GetParameters()
+        public override IEnumerable<ParameterType> GetParameters()
         {
             var reflectionData = CommandReflection.GetReflectionData(this.GetType());
-            return reflectionData.MappedProperties.Keys.ToArray();
+            foreach (var kv in reflectionData.MappedProperties)
+            {
+                var paramType = kv.Key;
+                var propInfo = kv.Value;
+
+                if (propInfo.PropertyType.Equals(typeof(bool)) && (bool)propInfo.GetValue(this, null) == true)
+                {
+                    yield return paramType;
+                }
+                else if (GetParameterValue(paramType) != null)
+                {
+                    yield return paramType;
+                }
+            }
         }
 
         public override bool HasParameter(ParameterType parameter)
@@ -21,10 +35,29 @@ namespace GCodeNet
         {
             var reflectionData = CommandReflection.GetReflectionData(this.GetType());
             var propInfo = reflectionData.MappedProperties[parameter];
-            return propInfo.GetValue(this, null)?.ToString();
+            var type = propInfo.PropertyType;
+
+            if (type.Equals(typeof(bool)))
+            {
+                return null;
+            }
+            else if (type.IsEnum)
+            {
+                return ((int)propInfo.GetValue(this, null)).ToString();
+            }
+            else if (type.IsGenericType && type.GetGenericArguments()[0].IsEnum)
+            {
+                var val = propInfo.GetValue(this, null);
+                if (val == null) return null;
+                return ((int)val).ToString();
+            }
+            else
+            {
+                return propInfo.GetValue(this, null)?.ToString();
+            }
         }
 
-        public override void SetParameterValue(ParameterType parameter, string value)
+        public override void SetParameterValue(ParameterType parameter, string strValue)
         {
             var reflectionData = CommandReflection.GetReflectionData(this.GetType());
             var propInfo = reflectionData.MappedProperties[parameter];
@@ -32,31 +65,37 @@ namespace GCodeNet
             var type = propInfo.PropertyType;
             bool isNullableType = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
 
-            if (propInfo.PropertyType.Equals(typeof(bool)))
+            if (type.Equals(typeof(bool)) || type.Equals(typeof(bool?)))
             {
                 propInfo.SetValue(this, true, null);
             }
-            else if (value != null)
+            else if (strValue != null)
             {
+                var value = Decimal.Parse(strValue);
                 if (type.Equals(typeof(byte)) || type.Equals(typeof(byte?)))
                 {
-                    propInfo.SetValue(this, byte.Parse(value), null);
+                    propInfo.SetValue(this, (byte)value, null);
                 }
                 else if (type.Equals(typeof(int)) || type.Equals(typeof(int?)))
                 {
-                    propInfo.SetValue(this, int.Parse(value), null);
+                    propInfo.SetValue(this, (int)value, null);
                 }
                 else if (propInfo.PropertyType.Equals(typeof(double)) || propInfo.PropertyType.Equals(typeof(double?)))
                 {
-                    propInfo.SetValue(this, double.Parse(value), null);
+                    propInfo.SetValue(this, (double)value, null);
                 }
                 else if (propInfo.PropertyType.Equals(typeof(decimal)) || propInfo.PropertyType.Equals(typeof(decimal?)))
                 {
-                    propInfo.SetValue(this, decimal.Parse(value), null);
+                    propInfo.SetValue(this, (decimal)value, null);
                 }
-                else if (propInfo.PropertyType.IsEnum)
+                else if (type.IsEnum)
                 {
-                    var enumVal = Enum.ToObject(propInfo.PropertyType, int.Parse(value));
+                    var enumVal = Enum.ToObject(type, (int)value);
+                    propInfo.SetValue(this, enumVal, null);
+                }
+                else if (type.IsGenericType && type.GetGenericArguments()[0].IsEnum)
+                {
+                    var enumVal = Enum.ToObject(type.GetGenericArguments()[0], (int)value);
                     propInfo.SetValue(this, enumVal, null);
                 }
                 else

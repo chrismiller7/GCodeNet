@@ -33,7 +33,7 @@ namespace GCodeNet
                 {
                     lineBuilder.Append("N" + (lineCounter++) + " ");
                 }
-                lineBuilder.Append(command.GetGCodeString());
+                lineBuilder.Append(command.ToGCode());
                 if (options.WriteCRC)
                 {
                     lineBuilder.Append("*" + CRC.Calculate(lineBuilder.ToString()));

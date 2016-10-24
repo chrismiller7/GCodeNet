@@ -50,7 +50,13 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="EnumType.cs" />
+    <Compile Include="BoolType.cs" />
+    <Compile Include="DoubleType.cs" />
+    <Compile Include="DecimalType.cs" />
+    <Compile Include="ByteType.cs" />
+    <Compile Include="CommandTest.cs" />
+    <Compile Include="IntType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

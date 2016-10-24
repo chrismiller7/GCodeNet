@@ -17,7 +17,7 @@ namespace GCodeNet
             this.CommandSubType = subType;
         }
 
-        public override ParameterType[] GetParameters()
+        public override IEnumerable<ParameterType> GetParameters()
         {
             return parameters.Keys.ToArray();
         }
@@ -66,7 +66,7 @@ namespace GCodeNet
 
         public override string ToString()
         {
-            return this.GetGCodeString();
+            return this.ToGCode();
         }
     }
 }

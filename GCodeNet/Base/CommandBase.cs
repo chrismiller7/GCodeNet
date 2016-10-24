@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using System.Collections.Generic;
 
 namespace GCodeNet
 {
@@ -7,7 +8,7 @@ namespace GCodeNet
     {
         public CommandType CommandType { get; set; }
         public int CommandSubType { get; set; }
-        public abstract ParameterType[] GetParameters();
+        public abstract IEnumerable<ParameterType> GetParameters();
         public abstract bool HasParameter(ParameterType parameter);
         public abstract string GetParameterValue(ParameterType parameter);
         public abstract void SetParameterValue(ParameterType parameter, string value);
@@ -45,7 +46,7 @@ namespace GCodeNet
             }
         }
 
-        public string GetGCodeString(int lineNumber = -1, bool addCrc = false)
+        public string ToGCode(bool addCrc = false, int lineNumber = -1)
         {
             StringBuilder sb = new StringBuilder();
 

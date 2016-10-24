@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace GCodeNet
 {
-    internal static class CommandReflection
+    public static class CommandReflection
     {
         static Dictionary<Tuple<CommandType, int>, Type> typesLookup = new Dictionary<Tuple<CommandType, int>, Type>();
 
@@ -16,13 +16,26 @@ namespace GCodeNet
             var assembly = Assembly.GetExecutingAssembly();
             foreach (Type type in assembly.GetTypes())
             {
-                var gcommandAttrib = (CommandAttribute)type.GetCustomAttributes(typeof(CommandAttribute), true).SingleOrDefault();
-                if (gcommandAttrib != null)
+                if (type.IsSubclassOf(typeof(CommandMapping)))
                 {
-                    var key = new Tuple<CommandType, int>(gcommandAttrib.CommandType, gcommandAttrib.CommandSubType);
-                    typesLookup[key] = type;
-                    propsLookup[type] = new CommandReflectionData(type);
+                    AddMappedType(type);
                 }
+            }
+        }
+
+        public static void AddMappedType(Type type)
+        {
+            if (!type.IsSubclassOf(typeof(CommandMapping)))
+            {
+                throw new Exception("Can only map a type derived from CommandMapping");
+            }
+
+            var gcommandAttrib = (CommandAttribute)type.GetCustomAttributes(typeof(CommandAttribute), true).SingleOrDefault();
+            if (gcommandAttrib != null)
+            {
+                var key = new Tuple<CommandType, int>(gcommandAttrib.CommandType, gcommandAttrib.CommandSubType);
+                typesLookup[key] = type;
+                propsLookup[type] = new CommandReflectionData(type);
             }
         }
 
