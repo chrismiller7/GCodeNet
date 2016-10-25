@@ -6,6 +6,17 @@ namespace GCodeNet
 {
     public abstract class CommandMapping : CommandBase
     {
+        protected CommandMapping()
+        {
+            var attrib = this.GetType().GetCustomAttributes(typeof(CommandAttribute), true).FirstOrDefault() as CommandAttribute;
+            if (attrib == null)
+            {
+                throw new Exception("A mapped command must have the CommandAttribute attribute");
+            }
+            this.CommandType = attrib.CommandType;
+            this.CommandSubType = attrib.CommandSubType;
+        }
+
         public override IEnumerable<ParameterType> GetParameters()
         {
             var reflectionData = CommandReflection.GetReflectionData(this.GetType());
