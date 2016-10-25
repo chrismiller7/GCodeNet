@@ -7,7 +7,7 @@ namespace GCodeNet
 {
     public class Command : CommandBase
     {
-        Dictionary<ParameterType, string> parameters = new Dictionary<ParameterType, string>();
+        Dictionary<ParameterType, decimal?> parameters = new Dictionary<ParameterType, decimal?>();
 
         private Command() { }
 
@@ -22,7 +22,7 @@ namespace GCodeNet
             return parameters.Keys.ToArray();
         }
 
-        public override string GetParameterValue(ParameterType parameter)
+        public override decimal? GetParameterValue(ParameterType parameter)
         {
             if (parameters.ContainsKey(parameter))
             {
@@ -41,15 +41,15 @@ namespace GCodeNet
             parameters.Remove(parameter);
         }
 
-        public override void SetParameterValue(ParameterType parameter, string value)
+        public override void SetParameterValue(ParameterType parameter, decimal? value)
         {
             parameters[parameter] = value;
         }
 
-        public static new Command Parse(string gcode)
+        public static Command Parse(string gcode)
         {
             var tokenizer = new GCodeTokenizer(gcode);
-            var commands = tokenizer.GetCommands().ToArray();
+            var commands = tokenizer.GetCommandTokens().ToArray();
             if (commands.Length != 1)
             {
                 throw new Exception("gcode may only contain a single command");

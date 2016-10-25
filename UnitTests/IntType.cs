@@ -17,7 +17,7 @@ namespace TestProject
     public class IntType
     {
         [TestMethod]
-        public void ParseInt()
+        public void TestInt()
         {
             CommandReflection.AddMappedType(typeof(IntClass));
             var c1 = (IntClass)CommandMapping.Parse("M999 X-1.1");
@@ -38,7 +38,7 @@ namespace TestProject
         }
 
         [TestMethod]
-        public void ParseNullableInt()
+        public void TestNullableInt()
         {
             CommandReflection.AddMappedType(typeof(IntClass));
             var c1 = (IntClass)CommandMapping.Parse("M999 Y-1.1");

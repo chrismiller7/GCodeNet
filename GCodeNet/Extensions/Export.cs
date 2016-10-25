@@ -19,27 +19,28 @@ namespace GCodeNet
             var writer = new StreamWriter(outStream);
 
             var commands = gcode.Commands.ToArray();
+
             if (options.WriteLineNumbers)
             {
-                //remove all existing Line number commands
-                commands = commands.Where(c => c.CommandType != CommandType.N).ToArray();
+                int lineCounter = 1;
+                commands = RemoveAllLineNumbers(commands);
+                foreach (var command in commands)
+                {
+                    writer.WriteLine(command.ToGCode(options.WriteCRC, lineCounter++));
+                }
             }
-
-            int lineCounter = 1;
-            foreach (var command in commands)
+            else
             {
-                StringBuilder lineBuilder = new StringBuilder();
-                if (options.WriteLineNumbers)
+                foreach (var command in commands)
                 {
-                    lineBuilder.Append("N" + (lineCounter++) + " ");
+                    writer.WriteLine(command.ToGCode(options.WriteCRC));
                 }
-                lineBuilder.Append(command.ToGCode());
-                if (options.WriteCRC)
-                {
-                    lineBuilder.Append("*" + CRC.Calculate(lineBuilder.ToString()));
-                }
-                writer.WriteLine(lineBuilder);
             }
+        }
+
+        static CommandBase[] RemoveAllLineNumbers(CommandBase[] commands)
+        {
+            return commands.Where(c => c.CommandType != CommandType.N).ToArray();
         }
     }
 }

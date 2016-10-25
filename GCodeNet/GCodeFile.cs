@@ -44,37 +44,13 @@ namespace GCodeNet
 
             var gcodeString = string.Join("", gcodeLines.Select(l => l.GCode));
             var tokenizer = new GCodeTokenizer(gcodeString);
+            var commandTokens = tokenizer.GetCommandTokens().ToArray();
 
-            int currentLineNum = 0;
-            bool isFirstLineNum = true;
+            this.Commands = commandTokens.Select(c => FromTokens(c, options.UseMappedObjects)).ToList();
 
-            var commands = tokenizer.GetCommands().ToArray();
-            foreach (var cmdTokens in commands)
+            if (options.CheckLineNumers)
             {
-                var obj = FromTokens(cmdTokens, options.UseMappedObjects);
-                if (obj.CommandType == CommandType.N)
-                {
-                    if (options.CheckLineNumers)
-                    {
-                        if (isFirstLineNum)
-                        {
-                            currentLineNum = obj.CommandSubType;
-                            isFirstLineNum = false;
-                        }
-                        else
-                        {
-                            currentLineNum++;
-                            if (obj.CommandSubType != currentLineNum )
-                            {
-                                throw new Exception($"Line numer out of order");
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    Commands.Add(obj);
-                }
+                CheckLineNumbers(this.Commands);
             }
         }
 
@@ -96,6 +72,21 @@ namespace GCodeNet
                 if (!gcodeLines[i].IsChecksumValid)
                 {
                     throw new Exception($"Checksum is invalid on line {i+1}:  {gcodeLines[i].OriginalString}");
+                }
+            }
+        }
+
+        void CheckLineNumbers(IEnumerable<CommandBase> commands)
+        {
+            var lineNumCommands = commands.Where(c => c.CommandType == CommandType.N).ToArray();
+            for (int i=0; i<lineNumCommands.Length-1; i++)
+            {
+                var lineNum1 = lineNumCommands[i].CommandSubType;
+                var lineNum2 = lineNumCommands[i+1].CommandSubType;
+
+                if (lineNum1 != lineNum2)
+                {
+                    throw new Exception("Line numbers are out of order");
                 }
             }
         }

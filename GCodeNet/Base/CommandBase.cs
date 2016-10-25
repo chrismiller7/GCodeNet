@@ -10,8 +10,8 @@ namespace GCodeNet
         public int CommandSubType { get; set; }
         public abstract IEnumerable<ParameterType> GetParameters();
         public abstract bool HasParameter(ParameterType parameter);
-        public abstract string GetParameterValue(ParameterType parameter);
-        public abstract void SetParameterValue(ParameterType parameter, string value);
+        public abstract decimal? GetParameterValue(ParameterType parameter);
+        public abstract void SetParameterValue(ParameterType parameter, decimal? value);
         public abstract void RemoveParameter(ParameterType parameter);
 
         internal void SetTokens(string[] tokens)
@@ -22,10 +22,10 @@ namespace GCodeNet
             for (int i = 2; i < tokens.Length; i++)
             {
                 var paramType = (ParameterType)Enum.Parse(typeof(ParameterType), tokens[i]);
-                string value = null;
+                decimal? value = null;
                 if (tokens.Length > i + 1 && !char.IsLetter(tokens[i + 1][0]))
                 {
-                    value = tokens[++i];
+                    value = decimal.Parse(tokens[++i]);
                 }
                 SetParameterValue(paramType, value);
             }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,6 +12,7 @@ namespace GCodeNet
         {
             this.gcode = RemoveWhitespace(gcode);
             CheckForIllegalChars(this.gcode);
+            this.gcode = this.gcode.ToUpper();
         }
 
         void CheckForIllegalChars(string gcode)
@@ -56,14 +58,34 @@ namespace GCodeNet
             return sb.ToString();
         }
 
-        public IEnumerable<string[]> GetCommands()
+        public IEnumerable<string[]> GetCommandTokens()
         {
+            bool isFirstToken = true;
+
             List<string> tokens = new List<string>();
             foreach (var token in GetTokens())
             {
-                if (token == "N" || token == "G" || token == "M")
+                if (isFirstToken)
                 {
-                    if (tokens.Count > 0)
+                    if (!IsValidCommandType(token))
+                    {
+                        throw new Exception("The first token must be a valid CommandType: G,M,N, etc");
+                    }
+                    isFirstToken = false;
+                }
+
+                if (!IsValidParameter(token) && !IsValidCommandType(token) && !IsParameterValue(token))
+                {
+                    throw new Exception("Invalid token: " + token);
+                }
+
+                if (IsValidCommandType(token))
+                {
+                    if (tokens.Count == 1)
+                    {
+                        throw new Exception("A command subtype must always follow a command type.");
+                    }
+                    else if (tokens.Count > 1)
                     {
                         yield return tokens.ToArray();
                     }
@@ -72,10 +94,30 @@ namespace GCodeNet
                 tokens.Add(token);
             }
 
-            if (tokens.Count > 0)
+            if (tokens.Count == 1)
+            {
+                throw new Exception("A command subtype must always follow a command type.");
+            }
+            else if (tokens.Count > 1)
             {
                 yield return tokens.ToArray();
             }
+        }
+
+        bool IsValidCommandType(string token)
+        {
+            return Enum.IsDefined(typeof(CommandType), token);
+        }
+
+        bool IsValidParameter(string token)
+        {
+            return Enum.IsDefined(typeof(ParameterType), token);
+        }
+
+        bool IsParameterValue(string token)
+        {
+            decimal tmp;
+            return decimal.TryParse(token, out tmp);
         }
 
         public IEnumerable<string> GetTokens()

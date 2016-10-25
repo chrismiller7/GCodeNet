@@ -31,7 +31,7 @@ namespace GCodeNet
             return reflectionData.MappedProperties.ContainsKey(parameter);
         }
 
-        public override string GetParameterValue(ParameterType parameter)
+        public override decimal? GetParameterValue(ParameterType parameter)
         {
             var reflectionData = CommandReflection.GetReflectionData(this.GetType());
             var propInfo = reflectionData.MappedProperties[parameter];
@@ -43,21 +43,24 @@ namespace GCodeNet
             }
             else if (type.IsEnum)
             {
-                return ((int)propInfo.GetValue(this, null)).ToString();
+                return (decimal)(int)propInfo.GetValue(this, null);
             }
             else if (type.IsGenericType && type.GetGenericArguments()[0].IsEnum)
             {
                 var val = propInfo.GetValue(this, null);
                 if (val == null) return null;
-                return ((int)val).ToString();
+                return (decimal)(int)val;
             }
             else
             {
-                return propInfo.GetValue(this, null)?.ToString();
+                var val = propInfo.GetValue(this, null);
+                if (val == null) return null;
+                var dec = (decimal)Convert.ChangeType(val, typeof(decimal));
+                return dec;
             }
         }
 
-        public override void SetParameterValue(ParameterType parameter, string strValue)
+        public override void SetParameterValue(ParameterType parameter, decimal? value)
         {
             var reflectionData = CommandReflection.GetReflectionData(this.GetType());
             var propInfo = reflectionData.MappedProperties[parameter];
@@ -69,9 +72,8 @@ namespace GCodeNet
             {
                 propInfo.SetValue(this, true, null);
             }
-            else if (strValue != null)
+            else if (value != null)
             {
-                var value = Decimal.Parse(strValue);
                 if (type.Equals(typeof(byte)) || type.Equals(typeof(byte?)))
                 {
                     propInfo.SetValue(this, (byte)value, null);
@@ -113,7 +115,7 @@ namespace GCodeNet
         public static CommandMapping Parse(string gcode)
         {
             var tokenizer = new GCodeTokenizer(gcode);
-            var commands = tokenizer.GetCommands().ToArray();
+            var commands = tokenizer.GetCommandTokens().ToArray();
             if (commands.Length != 1)
             {
                 throw new Exception("gcode may only contain a single command");
@@ -124,7 +126,7 @@ namespace GCodeNet
         public static CommandMapping Parse(Type mappedType, string gcode)
         {
             var tokenizer = new GCodeTokenizer(gcode);
-            var commands = tokenizer.GetCommands().ToArray();
+            var commands = tokenizer.GetCommandTokens().ToArray();
             if (commands.Length != 1)
             {
                 throw new Exception("gcode may only contain a single command");
