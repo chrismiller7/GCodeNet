@@ -6,7 +6,7 @@ namespace GCodeNet.Commands
         [ParameterType("X")]
         public double? MoveX { get; set; }
         [ParameterType("Y")]
-        public bool MoveY { get; set; }
+        public double MoveY { get; set; }
         [ParameterType("Z")]
         public double? MoveZ { get; set; }
         [ParameterType("E")]
