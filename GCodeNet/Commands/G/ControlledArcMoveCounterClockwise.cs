@@ -4,16 +4,16 @@ namespace GCodeNet.Commands
     public class ControlledArcMoveCounterClockwise : CommandMapping
     {
         [ParameterType("X")]
-        public double? MoveX { get; set; }
+        public decimal? MoveX { get; set; }
         [ParameterType("Y")]
-        public double? MoveY { get; set; }
+        public decimal? MoveY { get; set; }
         [ParameterType("I")]
-        public double? CenterX { get; set; }
+        public decimal? CenterX { get; set; }
         [ParameterType("J")]
-        public double? CenterY { get; set; }
+        public decimal? CenterY { get; set; }
         [ParameterType("E")]
-        public double? Extrude { get; set; }
+        public decimal? Extrude { get; set; }
         [ParameterType("F")]
-        public double? Feedrate { get; set; }
+        public decimal? Feedrate { get; set; }
     }
 }

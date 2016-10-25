@@ -4,8 +4,8 @@ namespace GCodeNet.Commands
     public class Dwell : CommandMapping
     {
         [ParameterType("P")]
-        public double? WaitInMSecs { get; set; }
+        public decimal? WaitInMSecs { get; set; }
         [ParameterType("S")]
-        public double? WaitInSecs { get; set; }
+        public decimal? WaitInSecs { get; set; }
     }
 }

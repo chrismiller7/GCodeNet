@@ -4,15 +4,15 @@ namespace GCodeNet.Commands
     public class RapidLinearMove : CommandMapping
     {
         [ParameterType("X")]
-        public double? MoveX { get; set; }
+        public decimal? MoveX { get; set; }
         [ParameterType("Y")]
-        public double? MoveY { get; set; }
+        public decimal? MoveY { get; set; }
         [ParameterType("Z")]
-        public double? MoveZ { get; set; }
+        public decimal? MoveZ { get; set; }
         [ParameterType("E")]
-        public double? Extrude { get; set; }
+        public decimal? Extrude { get; set; }
         [ParameterType("F")]
-        public double? Feedrate { get; set; }
+        public decimal? Feedrate { get; set; }
         [ParameterType("S")]
         public CheckEndstop CheckEndstop { get; set; }
     }
