@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Text;
 
 namespace GCodeNet
 {
@@ -102,6 +103,56 @@ namespace GCodeNet
             {
                 return Command.FromTokens(cmdTokens);
             }
+        }
+
+        public string ToGCode()
+        {
+            return ToGCode(new ExportFileOptions());
+        }
+
+        public string ToGCode(ExportFileOptions options)
+        {
+            using (var ms = new MemoryStream())
+            {
+                ToStream(ms, options);
+                ms.Position = 0;
+                return new StreamReader(ms).ReadToEnd();
+            }
+        }
+
+        public void ToStream(Stream stream)
+        {
+            ToStream(stream, new ExportFileOptions());
+        }
+
+        public void ToStream(Stream stream, ExportFileOptions options)
+        {
+            var writer = new StreamWriter(stream);
+            
+            var commands = this.Commands.ToArray();
+
+            if (options.WriteLineNumbers)
+            {
+                int lineCounter = 1;
+                commands = RemoveAllLineNumbers(commands);
+                foreach (var command in commands)
+                {
+                    writer.WriteLine(command.ToGCode(options.WriteCRC, lineCounter++));
+                }
+            }
+            else
+            {
+                foreach (var command in commands)
+                {
+                    writer.WriteLine(command.ToGCode(options.WriteCRC));
+                }
+            }
+            writer.Flush();
+        }
+
+        CommandBase[] RemoveAllLineNumbers(CommandBase[] commands)
+        {
+            return commands.Where(c => c.CommandType != CommandType.N).ToArray();
         }
     }
 }

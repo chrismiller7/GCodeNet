@@ -59,7 +59,7 @@
     <Compile Include="Commands\M\SetExtruderTemperature.cs" />
     <Compile Include="Commands\M\SetExtruderTemperatureAndWait.cs" />
     <Compile Include="Commands\M\SetExtruderToAbsolute.cs" />
-    <Compile Include="Extensions\Export.cs" />
+    <Compile Include="ExportFileOptions.cs" />
     <Compile Include="GCodeFileLine.cs" />
     <Compile Include="GCodeFileOptions.cs" />
     <Compile Include="Base\GCodeTokenizer.cs" />
