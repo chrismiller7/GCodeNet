@@ -151,5 +151,13 @@ namespace TestProject
         {
             var cmd = Command.Parse("34");
         }
+
+        [TestMethod]
+        public void CommandParseLeadingZeros()
+        {
+            var cmd = Command.Parse("G0003 X00020");
+            Assert.IsTrue(cmd.CommandSubType == 3);
+            Assert.IsTrue(cmd.GetParameterValue(ParameterType.X) == 20);
+        }
     }
 }

@@ -57,5 +57,16 @@ namespace TestProject
         {
             MissingAttributeClass cmd = new MissingAttributeClass();
         }
+
+        [TestMethod]
+        public void MappingPropertyTest()
+        {
+            var cmd = new SetExtruderTemperature();
+            cmd.Temperature = 98;
+            Assert.IsTrue(cmd.GetParameterValue(ParameterType.S) == 98);
+
+            cmd.SetParameterValue(ParameterType.S, 33);
+            Assert.IsTrue(cmd.Temperature == 33);
+        }
     }
 }
