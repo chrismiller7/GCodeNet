@@ -46,7 +46,7 @@ namespace GCodeNet
             var tokenizer = new GCodeTokenizer(gcodeString);
             var commandTokens = tokenizer.GetCommandTokens().ToArray();
 
-            this.Commands = commandTokens.Select(c => FromTokens(c, options.UseMappedObjects)).ToList();
+            this.Commands = commandTokens.Select(c => CreateCommandFromTokens(c, options.UseMappedObjects)).ToList();
 
             if (options.CheckLineNumers)
             {
@@ -71,7 +71,8 @@ namespace GCodeNet
             {
                 if (!gcodeLines[i].IsChecksumValid)
                 {
-                    throw new Exception($"Checksum is invalid on line {i+1}:  {gcodeLines[i].OriginalString}");
+                    var expectedCrc = CRC.Calculate(gcodeLines[i].GCode);
+                    throw new Exception($"Checksum is invalid on line {i+1}:  {gcodeLines[i].OriginalString}, Expected CRC: {expectedCrc}");
                 }
             }
         }
@@ -84,14 +85,14 @@ namespace GCodeNet
                 var lineNum1 = lineNumCommands[i].CommandSubType;
                 var lineNum2 = lineNumCommands[i+1].CommandSubType;
 
-                if (lineNum1 != lineNum2)
+                if (lineNum1 != lineNum2-1)
                 {
                     throw new Exception("Line numbers are out of order");
                 }
             }
         }
 
-        CommandBase FromTokens(string[] cmdTokens, bool useMappedObjects)
+        CommandBase CreateCommandFromTokens(string[] cmdTokens, bool useMappedObjects)
         {
             if (useMappedObjects)
             {
