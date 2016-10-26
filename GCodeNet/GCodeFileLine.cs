@@ -45,7 +45,7 @@ namespace GCodeNet
 
         string GetChecksum(string str)
         {
-            var idx = str.IndexOf('*');
+            var idx = str.LastIndexOf('*');
             if (idx >= 0)
             {
                 Checksum = int.Parse(str.Substring(idx+1));
