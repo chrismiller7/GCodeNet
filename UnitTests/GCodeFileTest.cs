@@ -171,5 +171,54 @@ namespace TestProject
             Assert.IsTrue(!(file.Commands[0] is RapidLinearMove));
         }
 
+        [TestMethod]
+        public void ExportWithNoLineNumbersOrCrc()
+        {
+            ExportFileOptions options = new ExportFileOptions();
+            options.WriteCRC = false;
+            options.WriteLineNumbers = false;
+            GCodeFile file = new GCodeFile("G1X1G1X2");
+            Assert.IsTrue(file.ToGCode(options) == "G1 X1 S0\r\nG1 X2 S0\r\n");
+        }
+
+        [TestMethod]
+        public void ExportWithLineNumbersOnly()
+        {
+            ExportFileOptions options = new ExportFileOptions();
+            options.WriteCRC = false;
+            options.WriteLineNumbers = true;
+            GCodeFile file = new GCodeFile("G1X1G1X2");
+            Assert.IsTrue(file.ToGCode(options) == "N1 G1 X1 S0\r\nN2 G1 X2 S0\r\n");
+        }
+
+        [TestMethod]
+        public void ExportWithCrcOnly()
+        {
+            ExportFileOptions options = new ExportFileOptions();
+            options.WriteCRC = true;
+            options.WriteLineNumbers = false;
+            GCodeFile file = new GCodeFile("G1X1G1X2");
+            Assert.IsTrue(file.ToGCode(options) == "G1 X1 S0*124\r\nG1 X2 S0*127\r\n");
+        }
+
+        [TestMethod]
+        public void ExportWithLineNumbersAndCrc()
+        {
+            ExportFileOptions options = new ExportFileOptions();
+            options.WriteCRC = true;
+            options.WriteLineNumbers = true;
+            GCodeFile file = new GCodeFile("G1X1G1X2");
+            Assert.IsTrue(file.ToGCode(options) == "N1 G1 X1 S0*35\r\nN2 G1 X2 S0*35\r\n");
+        }
+
+        [TestMethod]
+        public void RemoveOldLineNumbers()
+        {
+            ExportFileOptions options = new ExportFileOptions();
+            options.WriteCRC = false;
+            options.WriteLineNumbers = true;
+            GCodeFile file = new GCodeFile("N5 G1X1 N6 G1X2");
+            Assert.IsTrue(file.ToGCode(options) == "N1 G1 X1 S0\r\nN2 G1 X2 S0\r\n");
+        }
     }
 }
