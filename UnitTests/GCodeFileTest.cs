@@ -13,9 +13,25 @@ namespace TestProject
         {
             string gcode = "G0X1\nG0X2\nG0X3";
             GCodeFile file = new GCodeFile(gcode);
-            Assert.IsTrue(file.Commands[0].GetParameterValue(ParameterType.X) == 1);
-            Assert.IsTrue(file.Commands[1].GetParameterValue(ParameterType.X) == 2);
-            Assert.IsTrue(file.Commands[2].GetParameterValue(ParameterType.X) == 3);
+            Assert.IsTrue((decimal)file.Commands[0].GetParameterValue(ParameterType.X) == 1);
+            Assert.IsTrue((decimal)file.Commands[1].GetParameterValue(ParameterType.X) == 2);
+            Assert.IsTrue((decimal)file.Commands[2].GetParameterValue(ParameterType.X) == 3);
+        }
+
+        [TestMethod]
+        public void SingleCommand()
+        {
+            string gcode = "G0";
+            GCodeFile file = new GCodeFile(gcode);
+            Assert.IsTrue(((CommandBase)file.Commands[0]).CommandType == CommandType.G);
+        }
+
+        [TestMethod]
+        public void SingleCommandWithNewLine()
+        {
+            string gcode = "G0" + Environment.NewLine;
+            GCodeFile file = new GCodeFile(gcode);
+            Assert.IsTrue(((CommandBase)file.Commands[0]).CommandType == CommandType.G);
         }
 
         [TestMethod]
@@ -23,9 +39,9 @@ namespace TestProject
         {
             string gcode = "G0X1G0X2G0X3";
             GCodeFile file = new GCodeFile(gcode);
-            Assert.IsTrue(file.Commands[0].GetParameterValue(ParameterType.X) == 1);
-            Assert.IsTrue(file.Commands[1].GetParameterValue(ParameterType.X) == 2);
-            Assert.IsTrue(file.Commands[2].GetParameterValue(ParameterType.X) == 3);
+            Assert.IsTrue((decimal)file.Commands[0].GetParameterValue(ParameterType.X) == 1);
+            Assert.IsTrue((decimal)file.Commands[1].GetParameterValue(ParameterType.X) == 2);
+            Assert.IsTrue((decimal)file.Commands[2].GetParameterValue(ParameterType.X) == 3);
         }
 
         [TestMethod]
@@ -33,9 +49,9 @@ namespace TestProject
         {
             string gcode = "G0\nX1G0\nX2\nG0\nX\n3";
             GCodeFile file = new GCodeFile(gcode);
-            Assert.IsTrue(file.Commands[0].GetParameterValue(ParameterType.X) == 1);
-            Assert.IsTrue(file.Commands[1].GetParameterValue(ParameterType.X) == 2);
-            Assert.IsTrue(file.Commands[2].GetParameterValue(ParameterType.X) == 3);
+            Assert.IsTrue((decimal)file.Commands[0].GetParameterValue(ParameterType.X) == 1);
+            Assert.IsTrue((decimal)file.Commands[1].GetParameterValue(ParameterType.X) == 2);
+            Assert.IsTrue((decimal)file.Commands[2].GetParameterValue(ParameterType.X) == 3);
         }
 
         [TestMethod]
@@ -43,8 +59,8 @@ namespace TestProject
         {
             string gcode = "G0X1;G1X2\nG1X3";
             GCodeFile file = new GCodeFile(gcode);
-            Assert.IsTrue(file.Commands[0].GetParameterValue(ParameterType.X) == 1);
-            Assert.IsTrue(file.Commands[1].GetParameterValue(ParameterType.X) == 3);
+            Assert.IsTrue((decimal)file.Commands[0].GetParameterValue(ParameterType.X) == 1);
+            Assert.IsTrue((decimal)file.Commands[1].GetParameterValue(ParameterType.X) == 3);
         }
 
         [TestMethod]
@@ -52,7 +68,7 @@ namespace TestProject
         {
             string gcode = ";comment\nG1X1\n;comment";
             GCodeFile file = new GCodeFile(gcode);
-            Assert.IsTrue(file.Commands[0].GetParameterValue(ParameterType.X) == 1);
+            Assert.IsTrue((decimal)file.Commands[0].GetParameterValue(ParameterType.X) == 1);
         }
 
         [TestMethod]

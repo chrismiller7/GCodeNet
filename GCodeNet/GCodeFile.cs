@@ -8,10 +8,10 @@ namespace GCodeNet
 {
     public class GCodeFile
     {
-        public List<CommandBase> Commands = new List<CommandBase>();
+        public CommandCollection Commands { get; private set; }  = new CommandCollection();
 
         public GCodeFile(string gcode) : this(gcode, new GCodeFileOptions())
-        { 
+        {
         }
 
         public GCodeFile(string gcode, GCodeFileOptions options)
@@ -43,11 +43,11 @@ namespace GCodeNet
                 CheckCRC(gcodeLines);
             }
 
-            var gcodeString = string.Join("", gcodeLines.Select(l => l.GCode));
+            var gcodeString = string.Join(Environment.NewLine, gcodeLines.Select(l => l.GCode));
             var tokenizer = new GCodeTokenizer(gcodeString);
             var commandTokens = tokenizer.GetCommandTokens().ToArray();
 
-            this.Commands = commandTokens.Select(c => CreateCommandFromTokens(c, options.UseMappedObjects)).ToList();
+            this.Commands.AddRange(commandTokens.Select(c => CreateCommandFromTokens(c, options.UseMappedObjects)));
 
             if (options.CheckLineNumers)
             {
@@ -95,14 +95,7 @@ namespace GCodeNet
 
         CommandBase CreateCommandFromTokens(string[] cmdTokens, bool useMappedObjects)
         {
-            if (useMappedObjects)
-            {
-                return CommandBase.FromTokens(cmdTokens);
-            }
-            else
-            {
-                return Command.FromTokens(cmdTokens);
-            }
+            return Command.FromTokens(cmdTokens, useMappedObjects);
         }
 
         public string ToGCode()

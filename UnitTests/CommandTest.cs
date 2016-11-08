@@ -67,8 +67,8 @@ namespace TestProject
             Assert.IsTrue(parameters[2] == ParameterType.Z);
 
             Assert.IsTrue(cmd.GetParameterValue(ParameterType.X) == null);
-            Assert.IsTrue(cmd.GetParameterValue(ParameterType.Y) == -3);
-            Assert.IsTrue(cmd.GetParameterValue(ParameterType.Z) == 1.4m);
+            Assert.IsTrue((decimal)cmd.GetParameterValue(ParameterType.Y) == -3);
+            Assert.IsTrue((decimal)cmd.GetParameterValue(ParameterType.Z) == 1.4m);
         }
 
         [TestMethod]
@@ -106,6 +106,13 @@ namespace TestProject
 
         [TestMethod]
         [ExpectedException(typeof(Exception))]
+        public void CommandParseEmptyStringException()
+        {
+            var cmd = Command.Parse("");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
         public void CommandParseNoSubtypeException()
         {
             var cmd = Command.Parse("G");
@@ -117,7 +124,7 @@ namespace TestProject
             var cmd = Command.Parse("M \n 1  \t\t\t   X \t \n\n  23");
             Assert.IsTrue(cmd.CommandType == CommandType.M);
             Assert.IsTrue(cmd.CommandSubType == 1);
-            Assert.IsTrue(cmd.GetParameterValue( ParameterType.X) == 23m);
+            Assert.IsTrue((decimal)cmd.GetParameterValue( ParameterType.X) == 23m);
         }
 
         [TestMethod]
@@ -126,7 +133,7 @@ namespace TestProject
             var cmd = Command.Parse("M1X23YZ");
             Assert.IsTrue(cmd.CommandType == CommandType.M);
             Assert.IsTrue(cmd.CommandSubType == 1);
-            Assert.IsTrue(cmd.GetParameterValue(ParameterType.X) == 23m);
+            Assert.IsTrue((decimal)cmd.GetParameterValue(ParameterType.X) == 23m);
             Assert.IsTrue(cmd.GetParameterValue(ParameterType.Y) == null);
             Assert.IsTrue(cmd.GetParameterValue(ParameterType.Z) == null);
         }
@@ -157,7 +164,7 @@ namespace TestProject
         {
             var cmd = Command.Parse("G0003 X00020");
             Assert.IsTrue(cmd.CommandSubType == 3);
-            Assert.IsTrue(cmd.GetParameterValue(ParameterType.X) == 20);
+            Assert.IsTrue((decimal)cmd.GetParameterValue(ParameterType.X) == 20);
         }
     }
 }

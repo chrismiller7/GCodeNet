@@ -10,6 +10,13 @@ namespace TestProject
     {
     }
 
+    [Command(CommandType.M, 999)]
+    class CustomCommand : CommandMapping
+    {
+        [ParameterType(ParameterType.X)]
+        public int X { get; set; }
+    }
+
     [TestClass]
     public class MappedCommand
     {
@@ -28,9 +35,9 @@ namespace TestProject
             Assert.IsTrue(parameters[1] == ParameterType.Y);
             Assert.IsTrue(parameters[2] == ParameterType.S);
 
-            Assert.IsTrue(cmd.GetParameterValue(ParameterType.X) == 1);
-            Assert.IsTrue(cmd.GetParameterValue(ParameterType.Y) == 1.2m);
-            Assert.IsTrue(cmd.GetParameterValue(ParameterType.S) == 0);
+            Assert.IsTrue((decimal)cmd.GetParameterValue(ParameterType.X) == 1);
+            Assert.IsTrue((decimal)cmd.GetParameterValue(ParameterType.Y) == 1.2m);
+            Assert.IsTrue((decimal)cmd.GetParameterValue(ParameterType.S) == 0);
 
             Assert.IsTrue(cmd.ToGCode() == "G1 X1 Y1.2 S0");
         }
@@ -46,7 +53,7 @@ namespace TestProject
 
             var parameters = cmd.GetParameters().ToArray();
             Assert.IsTrue(parameters[0] == ParameterType.S);
-            Assert.IsTrue(cmd.GetParameterValue(ParameterType.S) == 98);
+            Assert.IsTrue((decimal)cmd.GetParameterValue(ParameterType.S) == 98);
 
             Assert.IsTrue(cmd.ToGCode() == "M104 S98");
         }
@@ -63,10 +70,59 @@ namespace TestProject
         {
             var cmd = new SetExtruderTemperature();
             cmd.Temperature = 98;
-            Assert.IsTrue(cmd.GetParameterValue(ParameterType.S) == 98);
+            Assert.IsTrue((decimal)cmd.GetParameterValue(ParameterType.S) == 98);
 
             cmd.SetParameterValue(ParameterType.S, 33);
             Assert.IsTrue(cmd.Temperature == 33);
+
+            cmd.SetParameterValue(ParameterType.S, null);
+            Assert.IsTrue(cmd.Temperature == null);
+
+            cmd.SetParameterValue(ParameterType.S, 1);
+            cmd.Temperature = null;
+            Assert.IsTrue(cmd.GetParameterValue(ParameterType.S) == null);
+
+        }
+
+
+        [TestMethod]
+        public void AutoAddCustomCommand()
+        {
+            CommandReflection.ClearMappings();
+            var cmd = new CustomCommand();
+            var g = cmd.ToGCode();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public void CustomCommandMappingException()
+        {
+            CommandReflection.ClearMappings();
+            var cmd = CommandMapping.Parse("M999 X");
+        }
+
+        [TestMethod]
+        public void CustomCommandAddType()
+        {
+            CommandReflection.ClearMappings();
+            CommandReflection.AddMappedType(typeof(CustomCommand));
+            var cmd = CommandMapping.Parse("M999 X");
+        }
+
+        [TestMethod]
+        public void CustomCommandAddAssembly()
+        {
+            CommandReflection.ClearMappings();
+            CommandReflection.AddMappedTypesFromAssembly(System.Reflection.Assembly.GetExecutingAssembly());
+            var cmd = CommandMapping.Parse("M999 X");
+        }
+
+        [TestMethod]
+        public void AutoAddCustomCommand2()
+        {
+            CommandReflection.ClearMappings();
+            var cmd = CommandMapping.Parse(typeof(CustomCommand), "M999 X");
+            var g = cmd.ToGCode();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace GCodeNet
 {
     public class Command : CommandBase
     {
-        Dictionary<ParameterType, decimal?> parameters = new Dictionary<ParameterType, decimal?>();
+        Dictionary<ParameterType, object> parameters = new Dictionary<ParameterType, object>();
 
         private Command() { }
 
@@ -22,7 +22,7 @@ namespace GCodeNet
             return parameters.Keys.ToArray();
         }
 
-        public override decimal? GetParameterValue(ParameterType parameter)
+        public override object GetParameterValue(ParameterType parameter)
         {
             if (parameters.ContainsKey(parameter))
             {
@@ -41,7 +41,7 @@ namespace GCodeNet
             parameters.Remove(parameter);
         }
 
-        public override void SetParameterValue(ParameterType parameter, decimal? value)
+        public override void SetParameterValue(ParameterType parameter, object value)
         {
             parameters[parameter] = value;
         }
@@ -57,7 +57,7 @@ namespace GCodeNet
             return FromTokens(commands[0]);
         }
 
-        public static new Command FromTokens(params string[] tokens)
+        public static Command FromTokens(params string[] tokens)
         {
             var obj = new Command();
             obj.SetTokens(tokens);
@@ -67,6 +67,11 @@ namespace GCodeNet
         public override string ToString()
         {
             return this.ToGCode();
+        }
+
+        public override void ClearAllParameters()
+        {
+            parameters.Clear();
         }
     }
 }

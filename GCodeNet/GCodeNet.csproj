@@ -45,11 +45,13 @@
     <Compile Include="Base\CommandMapping.cs" />
     <Compile Include="Base\Command.cs" />
     <Compile Include="Base\ParameterTypeAttribute.cs" />
+    <Compile Include="CommandCollection.cs" />
     <Compile Include="Commands\G\ControlledArcMoveClockwise.cs" />
     <Compile Include="Commands\G\ControlledArcMoveCounterClockwise.cs" />
     <Compile Include="Commands\G\Dwell.cs" />
     <Compile Include="Commands\G\MoveToOrigin.cs" />
     <Compile Include="Commands\G\RapidLinearMove.cs" />
+    <Compile Include="Commands\M\DisplayMessage.cs" />
     <Compile Include="Commands\M\FanOff.cs" />
     <Compile Include="Commands\M\FanOn.cs" />
     <Compile Include="Commands\M\StopIdleHold.cs" />

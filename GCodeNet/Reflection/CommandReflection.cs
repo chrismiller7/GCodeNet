@@ -14,6 +14,16 @@ namespace GCodeNet
         static CommandReflection()
         {
             var assembly = Assembly.GetExecutingAssembly();
+            AddMappedTypesFromAssembly(assembly);
+        }
+
+        public static void ClearMappings()
+        {
+            typesLookup.Clear();
+            propsLookup.Clear();
+        }
+        public static void AddMappedTypesFromAssembly(Assembly assembly)
+        {
             foreach (Type type in assembly.GetTypes())
             {
                 if (type.IsSubclassOf(typeof(CommandMapping)))
@@ -67,11 +77,16 @@ namespace GCodeNet
 
         public static CommandReflectionData GetReflectionData(Type type)
         {
+            if (!propsLookup.ContainsKey(type))
+            {
+                AddMappedType(type);
+            }
+
             if (propsLookup.ContainsKey(type))
             {
                 return propsLookup[type];
             }
-            return null;
+            throw new Exception("There is no mapped command for this type");
         }
     }
 

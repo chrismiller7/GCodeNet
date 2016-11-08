@@ -10,9 +10,11 @@ namespace GCodeNet
 
         public GCodeTokenizer(string gcode)
         {
-            this.gcode = RemoveWhitespace(gcode);
-            CheckForIllegalChars(this.gcode);
-            this.gcode = this.gcode.ToUpper();
+            //gcode = RemoveWhitespace(gcode);
+            //CheckForIllegalChars(gcode);
+            //gcode = gcode.ToUpper();
+
+            this.gcode = gcode;
         }
 
         void CheckForIllegalChars(string gcode)
@@ -74,7 +76,10 @@ namespace GCodeNet
                     isFirstToken = false;
                 }
 
-                if (!IsValidParameter(token) && !IsValidCommandType(token) && !IsParameterValue(token))
+                if (tokens.Count == 2 && tokens[0] == "M" && tokens[1] == "117")
+                {
+                }
+                else if (!IsValidParameter(token) && !IsValidCommandType(token) && !IsParameterValue(token))
                 {
                     throw new Exception("Invalid token: " + token);
                 }
@@ -111,6 +116,8 @@ namespace GCodeNet
 
         bool IsValidParameter(string token)
         {
+            if (token[0] == '"' && token[token.Length - 1] == '"')
+                return true;
             return Enum.IsDefined(typeof(ParameterType), token);
         }
 
@@ -124,27 +131,94 @@ namespace GCodeNet
         {
             StringBuilder buff = new StringBuilder();
 
-            for(int i=0; i< gcode.Length; i++)
+            string lastToken = "";
+
+            int i = 0;
+            while(i < gcode.Length)
             {
-                if (char.IsLetter(gcode[i]))
+                var token = GetNextToken(ref i);
+                if (!string.IsNullOrEmpty(token))
                 {
-                    if (buff.Length > 0)
-                    {
-                        yield return buff.ToString();
-                    }
-                    buff.Clear();
-                    yield return gcode[i].ToString();
+                    yield return token;
+                }
+
+                //This is a special formatting case for M117
+                if (lastToken == "M" && token == "117")
+                {
+                    var displayStr = ReadUntilEndOfLine(ref i);
+                    yield return ParameterType.D.ToString(); //Assign any param to this string because one is not provided.
+                    yield return '"' + displayStr + '"';
+                }
+                lastToken = token;
+            }
+        }
+
+        string ReadUntilEndOfLine(ref int i)
+        {
+            ConsumeWhiteSpace(ref i);
+
+            StringBuilder token = new StringBuilder();
+            while (i < gcode.Length)
+            {
+                char c = gcode[i];
+                if (c == '\n')
+                {
+                    return token.ToString().TrimEnd('\n', '\r');
                 }
                 else
                 {
-                    buff.Append(gcode[i]);
+                    token.Append(c);
+                    i++;
+                }
+            }
+            return token.ToString().TrimEnd('\n','\r');
+        }
+
+        void ConsumeWhiteSpace(ref int i)
+        {
+            while (i < gcode.Length)
+            {
+                char c = gcode[i];
+                if (!char.IsWhiteSpace(c))
+                {
+                    break;
+                }
+                i++;
+            }
+        }
+
+        string GetNextToken(ref int i)
+        {
+            ConsumeWhiteSpace(ref i);
+            if (i >= gcode.Length) return null;
+
+            if (char.IsLetter(gcode[i]))
+            {
+                return gcode[i++].ToString().ToUpper();
+            }
+
+            StringBuilder token = new StringBuilder();
+            while (i < gcode.Length)
+            {
+                char c = gcode[i];
+                if ((c >= '0' && c <= '9') || c == '+' || c == '-' || c == '.' || c == ':')
+                {
+                    token.Append(c);
+                    i++;
+                }
+                else 
+                {
+                    if (token.Length == 0) throw new Exception("invalid token character");
+                    return token.ToString().ToUpper();
                 }
             }
 
-            if (buff.Length > 0)
+            if (token.Length > 0)
             {
-                yield return buff.ToString();
+                return token.ToString();
             }
+            return null;
         }
     }
+
 }

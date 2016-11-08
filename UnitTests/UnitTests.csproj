@@ -57,6 +57,7 @@
     <Compile Include="ByteType.cs" />
     <Compile Include="CommandTest.cs" />
     <Compile Include="GCodeFileTest.cs" />
+    <Compile Include="M117.cs" />
     <Compile Include="MappedCommand.cs" />
     <Compile Include="IntType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
