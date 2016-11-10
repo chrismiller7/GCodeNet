@@ -189,7 +189,7 @@ namespace TestProject
             options.WriteCRC = false;
             options.WriteLineNumbers = false;
             GCodeFile file = new GCodeFile("G1X1G1X2");
-            Assert.IsTrue(file.ToGCode(options) == "G1 X1 S0\r\nG1 X2 S0\r\n");
+            Assert.IsTrue(file.ToGCode(options) == "G1 X1 S0" + Environment.NewLine + "G1 X2 S0" + Environment.NewLine);
         }
 
         [Test]
@@ -199,7 +199,7 @@ namespace TestProject
             options.WriteCRC = false;
             options.WriteLineNumbers = true;
             GCodeFile file = new GCodeFile("G1X1G1X2");
-            Assert.IsTrue(file.ToGCode(options) == "N1 G1 X1 S0\r\nN2 G1 X2 S0\r\n");
+            Assert.IsTrue(file.ToGCode(options) == "N1 G1 X1 S0" + Environment.NewLine + "N2 G1 X2 S0" + Environment.NewLine);
         }
 
         [Test]
@@ -209,7 +209,7 @@ namespace TestProject
             options.WriteCRC = true;
             options.WriteLineNumbers = false;
             GCodeFile file = new GCodeFile("G1X1G1X2");
-            Assert.IsTrue(file.ToGCode(options) == "G1 X1 S0*124\r\nG1 X2 S0*127\r\n");
+            Assert.IsTrue(file.ToGCode(options) == "G1 X1 S0*124" + Environment.NewLine + "G1 X2 S0*127" + Environment.NewLine);
         }
 
         [Test]
@@ -219,7 +219,7 @@ namespace TestProject
             options.WriteCRC = true;
             options.WriteLineNumbers = true;
             GCodeFile file = new GCodeFile("G1X1G1X2");
-            Assert.IsTrue(file.ToGCode(options) == "N1 G1 X1 S0*35\r\nN2 G1 X2 S0*35\r\n");
+            Assert.IsTrue(file.ToGCode(options) == "N1 G1 X1 S0*35" + Environment.NewLine + "N2 G1 X2 S0*35" + Environment.NewLine);
         }
 
         [Test]
@@ -229,7 +229,7 @@ namespace TestProject
             options.WriteCRC = false;
             options.WriteLineNumbers = true;
             GCodeFile file = new GCodeFile("N5 G1X1 N6 G1X2");
-            Assert.IsTrue(file.ToGCode(options) == "N1 G1 X1 S0\r\nN2 G1 X2 S0\r\n");
+            Assert.IsTrue(file.ToGCode(options) == "N1 G1 X1 S0" + Environment.NewLine + "N2 G1 X2 S0" + Environment.NewLine);
         }
     }
 }
