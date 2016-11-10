@@ -1,15 +1,15 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using GCodeNet;
 using GCodeNet.Commands;
 using System.Linq;
 
 namespace TestProject
 {
-    [TestClass]
+    [TestFixture]
     public class M117Test
     {
-        [TestMethod]
+        [Test]
         public void M117CommandParse()
         {
             var cmd = CommandBase.Parse("M117 Hello World");
@@ -18,7 +18,7 @@ namespace TestProject
             Assert.IsTrue(cmd.ToGCode() == "M117 Hello World");
         }
 
-        [TestMethod]
+        [Test]
         public void M117CommandParseEmpty()
         {
             var cmd = CommandBase.Parse("M117");
@@ -27,7 +27,7 @@ namespace TestProject
             Assert.IsTrue(cmd.ToGCode() == "M117");
         }
 
-        [TestMethod]
+        [Test]
         public void M117CommandNoWhiteSpace()
         {
             var cmd = CommandBase.Parse("M117Hello");
@@ -36,7 +36,7 @@ namespace TestProject
             Assert.IsTrue(cmd.ToGCode() == "M117 Hello");
         }
 
-        [TestMethod]
+        [Test]
         public void M117CommandExtraWhiteSpace()
         {
             var cmd = CommandBase.Parse("   M117        Hello");
@@ -45,7 +45,7 @@ namespace TestProject
             Assert.IsTrue(cmd.ToGCode() == "M117 Hello");
         }
 
-        [TestMethod]
+        [Test]
         public void M117CommandParseMultiple()
         {
             var cmd = CommandBase.Parse("M117 Hello M117 Hello");
@@ -54,7 +54,7 @@ namespace TestProject
             Assert.IsTrue(cmd.ToGCode() == "M117 Hello M117 Hello");
         }
 
-        [TestMethod]
+        [Test]
         public void M117CommandParseInvalidChars()
         {
             var cmd = CommandBase.Parse("M117 Hello:?.+-';*");
@@ -63,7 +63,7 @@ namespace TestProject
             Assert.IsTrue(cmd.ToGCode() == "M117 Hello:?.+-';*");
         }
 
-        [TestMethod]
+        [Test]
         public void M117FileParserGBeforeM()
         {
             string gcode = "G1M117 Hello";
@@ -74,7 +74,7 @@ namespace TestProject
             Assert.IsTrue(file.Commands[1].ToGCode() == "M117 Hello");
         }
 
-        [TestMethod]
+        [Test]
         public void M117FileParserGAfterM()
         {
             string gcode = "M117G1 Hello";
@@ -84,7 +84,7 @@ namespace TestProject
             Assert.IsTrue(file.Commands[0].ToGCode() == "M117 G1 Hello");
         }
 
-        [TestMethod]
+        [Test]
         public void M117FileParserMultipleLines()
         {
             string gcode = "M117 Hello\r\nM117 World";
@@ -96,7 +96,7 @@ namespace TestProject
             Assert.IsTrue(file.Commands[1].ToGCode() == "M117 World");
         }
 
-        [TestMethod]
+        [Test]
         public void M117FileParserWithComment()
         {
             string gcode = "M117 Hello;World";
@@ -106,7 +106,7 @@ namespace TestProject
             Assert.IsTrue(file.Commands[0].ToGCode() == "M117 Hello");
         }
 
-        [TestMethod]
+        [Test]
         public void M117FileParserWithCRC()
         {
             string gcode = "M117 Hello*24";

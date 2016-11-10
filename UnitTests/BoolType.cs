@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using GCodeNet;
 
 namespace TestProject
@@ -12,10 +12,10 @@ namespace TestProject
 
     }
 
-    [TestClass]
+    [TestFixture]
     public class BoolType
     {
-        [TestMethod]
+        [Test]
         public void TestBool()
         {
             CommandReflection.AddMappedType(typeof(BoolClass));

@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using GCodeNet;
 
 namespace TestProject
@@ -19,10 +19,10 @@ namespace TestProject
         public EnumObject? Y { get; set; }
     }
 
-    [TestClass]
+    [TestFixture]
     public class EnumType
     {
-        [TestMethod]
+        [Test]
         public void TestEnum()
         {
             CommandReflection.AddMappedType(typeof(EnumClass));
@@ -46,7 +46,7 @@ namespace TestProject
             Assert.IsTrue(c6.ToGCode() == "M999 X-1");
         }
 
-        [TestMethod]
+        [Test]
         public void TestNullableEnum()
         {
             CommandReflection.AddMappedType(typeof(EnumClass));

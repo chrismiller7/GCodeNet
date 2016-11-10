@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using GCodeNet;
 
 namespace TestProject
@@ -13,10 +13,10 @@ namespace TestProject
         public byte? Y { get; set; }
     }
 
-    [TestClass]
+    [TestFixture]
     public class ByteType
     {
-        [TestMethod]
+        [Test]
         public void TestByte()
         {
             CommandReflection.AddMappedType(typeof(ByteClass));
@@ -34,7 +34,7 @@ namespace TestProject
             Assert.IsTrue(c5.ToGCode() == "M999 X0");
         }
 
-        [TestMethod]
+        [Test]
         public void TestNullableByte()
         {
             CommandReflection.AddMappedType(typeof(ByteClass));

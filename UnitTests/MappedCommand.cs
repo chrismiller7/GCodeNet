@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using GCodeNet;
 using GCodeNet.Commands;
 using System.Linq;
@@ -17,10 +17,10 @@ namespace TestProject
         public int X { get; set; }
     }
 
-    [TestClass]
+    [TestFixture]
     public class MappedCommand
     {
-        [TestMethod]
+        [Test]
         public void RapidLinearMoveTest()
         {
             var cmd = new RapidLinearMove();
@@ -42,7 +42,7 @@ namespace TestProject
             Assert.IsTrue(cmd.ToGCode() == "G1 X1 Y1.2 S0");
         }
 
-        [TestMethod]
+        [Test]
         public void SetExtruderTemperatureTest()
         {
             var cmd = new SetExtruderTemperature();
@@ -58,14 +58,13 @@ namespace TestProject
             Assert.IsTrue(cmd.ToGCode() == "M104 S98");
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [Test]
         public void MissingCommandAttribute()
         {
-            MissingAttributeClass cmd = new MissingAttributeClass();
+            Assert.Catch(typeof(Exception), () => { var cmd = new MissingAttributeClass(); });
         }
 
-        [TestMethod]
+        [Test]
         public void MappingPropertyTest()
         {
             var cmd = new SetExtruderTemperature();
@@ -85,7 +84,7 @@ namespace TestProject
         }
 
 
-        [TestMethod]
+        [Test]
         public void AutoAddCustomCommand()
         {
             CommandReflection.ClearMappings();
@@ -93,15 +92,14 @@ namespace TestProject
             var g = cmd.ToGCode();
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [Test]
         public void CustomCommandMappingException()
         {
             CommandReflection.ClearMappings();
-            var cmd = CommandMapping.Parse("M999 X");
+            Assert.Catch(typeof(Exception), () => { var cmd = CommandMapping.Parse("M999 X"); });
         }
 
-        [TestMethod]
+        [Test]
         public void CustomCommandAddType()
         {
             CommandReflection.ClearMappings();
@@ -109,7 +107,7 @@ namespace TestProject
             var cmd = CommandMapping.Parse("M999 X");
         }
 
-        [TestMethod]
+        [Test]
         public void CustomCommandAddAssembly()
         {
             CommandReflection.ClearMappings();
@@ -117,7 +115,7 @@ namespace TestProject
             var cmd = CommandMapping.Parse("M999 X");
         }
 
-        [TestMethod]
+        [Test]
         public void AutoAddCustomCommand2()
         {
             CommandReflection.ClearMappings();

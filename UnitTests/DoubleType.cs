@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using GCodeNet;
 
 namespace TestProject
@@ -13,10 +13,10 @@ namespace TestProject
         public double? Y { get; set; }
     }
 
-    [TestClass]
+    [TestFixture]
     public class DoubleType
     {
-        [TestMethod]
+        [Test]
         public void TestDouble()
         {
             CommandReflection.AddMappedType(typeof(DoubleClass));
@@ -37,7 +37,7 @@ namespace TestProject
             Assert.IsTrue(c5.ToGCode() == "M999 X0");
         }
 
-        [TestMethod]
+        [Test]
         public void TestNullableDouble()
         {
             CommandReflection.AddMappedType(typeof(DoubleClass));

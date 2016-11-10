@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using GCodeNet;
 
 namespace TestProject
@@ -13,10 +13,10 @@ namespace TestProject
         public int? Y { get; set; }
     }
 
-    [TestClass]
+    [TestFixture]
     public class IntType
     {
-        [TestMethod]
+        [Test]
         public void TestInt()
         {
             CommandReflection.AddMappedType(typeof(IntClass));
@@ -37,7 +37,7 @@ namespace TestProject
             Assert.IsTrue(c5.ToGCode() == "M999 X0");
         }
 
-        [TestMethod]
+        [Test]
         public void TestNullableInt()
         {
             CommandReflection.AddMappedType(typeof(IntClass));

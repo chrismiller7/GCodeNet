@@ -1,21 +1,21 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using GCodeNet;
 using System.Linq;
 
 namespace TestProject
 {
-    [TestClass]
+    [TestFixture]
     public class CommandTest
     {
-        [TestMethod]
+        [Test]
         public void CommandCtor()
         {
             Command cmd = new Command(CommandType.G, 3);
             Assert.IsTrue(cmd.ToGCode() == "G3");
         }
 
-        [TestMethod]
+        [Test]
         public void SetParameterValue()
         {
             Command cmd = new Command(CommandType.G, 3);
@@ -23,7 +23,7 @@ namespace TestProject
             Assert.IsTrue(cmd.ToGCode() == "G3 X-23");
         }
 
-        [TestMethod]
+        [Test]
         public void SetParameterEmptyValue()
         {
             Command cmd = new Command(CommandType.G, 3);
@@ -31,7 +31,7 @@ namespace TestProject
             Assert.IsTrue(cmd.ToGCode() == "G3 X");
         }
 
-        [TestMethod]
+        [Test]
         public void ToGCodeWithLineNumber()
         {
             Command cmd = new Command(CommandType.G, 3);
@@ -39,7 +39,7 @@ namespace TestProject
             Assert.IsTrue(cmd.ToGCode(false, 5) == "N5 G3 X-23.1234");
         }
 
-        [TestMethod]
+        [Test]
         public void ToGCodeWithCRC()
         {
             Command cmd = new Command(CommandType.G, 3);
@@ -47,7 +47,7 @@ namespace TestProject
             Assert.IsTrue(cmd.ToGCode(true) == "G3 X-23*32");
         }
 
-        [TestMethod]
+        [Test]
         public void ToGCodeWithLineNumberAndCRC()
         {
             Command cmd = new Command(CommandType.G, 3);
@@ -55,7 +55,7 @@ namespace TestProject
             Assert.IsTrue(cmd.ToGCode(true, 5) == "N5 G3 X-23*123");
         }
 
-        [TestMethod]
+        [Test]
         public void CommandParse()
         {
             var cmd = Command.Parse("G1 X Y-3 Z1.4");
@@ -71,7 +71,7 @@ namespace TestProject
             Assert.IsTrue((decimal)cmd.GetParameterValue(ParameterType.Z) == 1.4m);
         }
 
-        [TestMethod]
+        [Test]
         public void CommandParseLowercase()
         {
             var cmd = Command.Parse("g1 x");
@@ -83,42 +83,38 @@ namespace TestProject
             Assert.IsTrue(cmd.GetParameterValue(ParameterType.X) == null);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [Test]
         public void CommandParseMultipleCommands()
         {
-            var cmd = Command.Parse("N2 G1");
+            Assert.Catch(typeof(Exception), () => { var cmd = Command.Parse("N2 G1"); });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [Test]
         public void CommandParseCrcException()
         {
-            var cmd = Command.Parse("G1*34");
+            Assert.Catch(typeof(Exception), () => { var cmd = Command.Parse("G1*34"); });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [Test]
         public void CommandParseCommentException()
         {
-            var cmd = Command.Parse("G1;comment");
+            Assert.Catch(typeof(Exception), () => { var cmd = Command.Parse("G1;comment"); });
+            
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [Test]
         public void CommandParseEmptyStringException()
         {
-            var cmd = Command.Parse("");
+            Assert.Catch(typeof(Exception), () => { var cmd = Command.Parse(""); });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [Test]
         public void CommandParseNoSubtypeException()
         {
-            var cmd = Command.Parse("G");
+            Assert.Catch(typeof(Exception), () => { var cmd = Command.Parse("G"); });
         }
 
-        [TestMethod]
+        [Test]
         public void CommandParseWhitespace()
         {
             var cmd = Command.Parse("M \n 1  \t\t\t   X \t \n\n  23");
@@ -127,7 +123,7 @@ namespace TestProject
             Assert.IsTrue((decimal)cmd.GetParameterValue( ParameterType.X) == 23m);
         }
 
-        [TestMethod]
+        [Test]
         public void CommandParseNoWhitespace()
         {
             var cmd = Command.Parse("M1X23YZ");
@@ -138,28 +134,25 @@ namespace TestProject
             Assert.IsTrue(cmd.GetParameterValue(ParameterType.Z) == null);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [Test]
         public void CommandParseInvalidCommandTypeException()
         {
-            var cmd = Command.Parse("Z3");
+            Assert.Catch(typeof(Exception), () => { var cmd = Command.Parse("Z3"); });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [Test]
         public void CommandParseInvalidParameterException()
         {
-            var cmd = Command.Parse("M3 A");
+            Assert.Catch(typeof(Exception), () => { var cmd = Command.Parse("M3 A"); });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [Test]
         public void CommandParseNoCommandTypeException()
         {
-            var cmd = Command.Parse("34");
+            Assert.Catch(typeof(Exception), () => { var cmd = Command.Parse("34"); });
         }
 
-        [TestMethod]
+        [Test]
         public void CommandParseLeadingZeros()
         {
             var cmd = Command.Parse("G0003 X00020");

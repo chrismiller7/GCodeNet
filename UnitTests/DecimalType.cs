@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using GCodeNet;
 
 namespace TestProject
@@ -13,10 +13,10 @@ namespace TestProject
         public decimal? Y { get; set; }
     }
 
-    [TestClass]
+    [TestFixture]
     public class DecimalType
     {
-        [TestMethod]
+        [Test]
         public void TestDecimal()
         {
             CommandReflection.AddMappedType(typeof(DecimalClass));
@@ -37,7 +37,7 @@ namespace TestProject
             Assert.IsTrue(c5.ToGCode() == "M999 X0");
         }
 
-        [TestMethod]
+        [Test]
         public void TestNullableDecimal()
         {
             CommandReflection.AddMappedType(typeof(DecimalClass));
