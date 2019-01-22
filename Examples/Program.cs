@@ -12,6 +12,8 @@ namespace Examples
             CreateCommandFromGCode();
             GCodeFromMappedCommand();
             MappedCommandFromGCode();
+
+            Console.ReadLine();
         }
 
         static void CreateGCodeCommand()
